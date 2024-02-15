@@ -8,6 +8,8 @@ krijin_table2 = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin
 ingaas_table = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\InGaAs Table 1.xlsx', index_col='Structure')
 data_001 = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_001.xlsx', index_col='Material')
 data_111 = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_111.xlsx', index_col='Material')
+Data_GaInAs = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAs.xlsx', index_col='Material')
+Data_GaInAsP = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAsP.xlsx', index_col='Material')
 
 def calculate_bandgap(substrate, epilayer, orientation):
     """
@@ -74,7 +76,8 @@ def calculate_bandgap(substrate, epilayer, orientation):
     # Calculate the energy gap between the valence band of the epilayer and the substrate
     ΔE_valence_gap = Ev_epilayer - Ev_substrate
 
-    return Ev_epilayer, Ec_epilayer, Ev_substrate, Ec_substrate, ΔE_valence_gap, D_001, a_parallel_substrate, a_perpendicular_substrate, ε_parallel, ε_perpendicular, Δ_Evav_hydrostatic, Δ_Ec_hydrostatic, δ_E_sh, Δ_Ehh_sh, Δ_Elh_sh
+    #return Ev_epilayer, Ec_epilayer, Ev_substrate, Ec_substrate, ΔE_valence_gap, D_001, a_parallel_substrate, a_perpendicular_substrate, ε_parallel, ε_perpendicular, Δ_Evav_hydrostatic, Δ_Ec_hydrostatic, δ_E_sh, Δ_Ehh_sh, Δ_Elh_sh
+    return Ev_epilayer, Ec_epilayer, Ev_substrate, Ec_substrate, ΔE_valence_gap
 
 def plot_binary(ax, ΔE_valence_gap, substrate_material, epilayer_material, Ev_substrate, Ev_epilayer, Ec_substrate, Ec_epilayer, orientation):
     """
@@ -149,6 +152,7 @@ def process_data_binary(orientations, epilayer_material, substrate_material):
     print(f"Conduction Band Edge (Ec): {Ec_epilayer} eV")
     print(f"Energy Gap between Valence Band of Epilayer and Substrate (ΔE_valence_gap): {ΔE_valence_gap} eV")
 
+    # Compile data into spreadsheet
     if orientations == '001':
         data_001.loc[epilayer_material, 'Ev'] = Ev_epilayer
         data_001.loc[epilayer_material, 'Ec'] = Ec_epilayer
@@ -186,7 +190,6 @@ def process_data_binary(orientations, epilayer_material, substrate_material):
         data_111.loc[substrate_material, 'a_parallel'] = a_parallel_substrate
         data_111.to_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\data_111.xlsx')
 
-    
     # Plot the results for orientations
     fig, ax = plt.subplots()
     plot_binary(ax, ΔE_valence_gap, substrate_material, epilayer_material, Ev_substrate, Ev_epilayer, Ec_substrate, Ec_epilayer, orientation=orientations)
@@ -246,6 +249,17 @@ def process_data_ternary(material_parameter):
             T_ABC_values = calculate_T_values_ternary(structure, GaAs, InAs, GaInAs, material_parameter)
 
         print(f'T_ABC_{structure}: {material_parameter}: {T_ABC_values} eV')
+
+        # Compile data into spreadsheet
+        if material_parameter == 'Eg(Γ)':
+            Data_GaInAs.loc['GaInAs', f'{structure} - Eg(Γ)'] = T_ABC_values
+        elif material_parameter == 'Δ0':
+            Data_GaInAs.loc['GaInAs', f'{structure} - Δ0'] = T_ABC_values
+        elif material_parameter == 'Ev':
+            Data_GaInAs.loc['GaInAs', f'{structure} - Ev'] = T_ABC_values
+        elif material_parameter == 'Ec':
+            Data_GaInAs.loc['GaInAs', f'{structure} - Ec'] = T_ABC_values
+        Data_GaInAs.to_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAs.xlsx')
         T_ABC_values_list.append(T_ABC_values)
 
     return T_ABC_values_list
@@ -330,6 +344,17 @@ def process_data_quaternary(material_parameter):
     Q_xy_values = calculate_Q_values(T_ABC_values, T_ABD_values, T_ACD_values, T_BCD_values)
     # Display the results
     print(f'Q(x,y): {material_parameter}: {Q_xy_values} eV ')
+
+    # Compile data into spreadsheet
+    if material_parameter == 'Eg(Γ)':
+        Data_GaInAsP.loc['GaInAsP', 'Eg(Γ)'] = Q_xy_values
+    elif material_parameter == 'Δ0':
+        Data_GaInAsP.loc['GaInAsP', 'Δ0'] = Q_xy_values
+    elif material_parameter == 'Ev':
+        Data_GaInAsP.loc['GaInAsP', 'Ev'] = Q_xy_values
+    elif material_parameter == 'Ec':
+        Data_GaInAsP.loc['GaInAsP', 'Ec'] = Q_xy_values
+    Data_GaInAsP.to_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAsP.xlsx')
 
     return Q_xy_values
     
@@ -539,11 +564,23 @@ def main():
         fig, ax = process_data_binary('111', epilayer_material, substrate_material)
 
     elif calculation_type == 'ternary':
+        #Run calculations to import data into spreadsheet
+        process_data_ternary('Eg(Γ)')
+        process_data_ternary('Δ0')
+        process_data_ternary('Ev')
+        process_data_ternary('Ec')
+
         fig, ax = plt.subplots()
         plot_GaInAs_InP(ax)
         plt.show()
 
     elif calculation_type == 'quaternary':
+        #Run calculations to import data into spreadsheet
+        process_data_quaternary('Eg(Γ)')
+        process_data_quaternary('Δ0')
+        process_data_quaternary('Ev')
+        process_data_quaternary('Ec')
+
         fig, ax = plt.subplots()
         plot_GaInAsP_InP(ax)
         plt.show()
