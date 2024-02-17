@@ -283,15 +283,15 @@ def calculate_T_values_quaternary(GaAs, InAs, GaInAs, GaP, GaInP, GaPAs, InP, In
         tuple: T values for different compositions.
     """
     if material_parameter == 'Eg(Γ)' or material_parameter == 'Δ0':
-        T_ABC_values_quaternary = 0.5 * GaAs + (1 - 0.5) * InAs + 0.5 * (0.5 - 1) * GaInAs
-        T_ABD_values_quaternary = 0.5 * GaP + (1 - 0.5) * InP + 0.5 * (0.5 - 1) * GaInP
-        T_ACD_values_quaternary = 0.5 * GaAs + (1 - 0.5) * GaP + 0.5 * (0.5 - 1) * GaPAs
-        T_BCD_values_quaternary = 0.5 * InAs + (1 - 0.5) * InP + 0.5 * (0.5 - 1) * InPAs
+        T_ABC_values_quaternary = 0.14 * GaAs + (1 - 0.14) * InAs + 0.14 * (0.14 - 1) * GaInAs
+        T_ABD_values_quaternary = 0.14 * GaP + (1 - 0.14) * InP + 0.14 * (0.14 - 1) * GaInP
+        T_ACD_values_quaternary = 0.3 * GaAs + (1 - 0.3) * GaP + 0.3 * (0.3 - 1) * GaPAs
+        T_BCD_values_quaternary = 0.3 * InAs + (1 - 0.5) * InP + 0.3 * (0.3 - 1) * InPAs
     elif material_parameter == 'Ev' or material_parameter == 'Ec':
-        T_ABC_values_quaternary = 0.5 * GaAs + (1 - 0.5) * InAs 
-        T_ABD_values_quaternary = 0.5 * GaP + (1 - 0.5) * InP 
-        T_ACD_values_quaternary = 0.5 * GaAs + (1 - 0.5) * GaP 
-        T_BCD_values_quaternary = 0.5 * InAs + (1 - 0.5) * InP 
+        T_ABC_values_quaternary = 0.14 * GaAs + (1 - 0.13) * InAs 
+        T_ABD_values_quaternary = 0.14 * GaP + (1 - 0.14) * InP 
+        T_ACD_values_quaternary = 0.3 * GaAs + (1 - 0.3) * GaP 
+        T_BCD_values_quaternary = 0.3 * InAs + (1 - 0.3) * InP 
 
     return T_ABC_values_quaternary, T_ABD_values_quaternary, T_ACD_values_quaternary, T_BCD_values_quaternary
 
