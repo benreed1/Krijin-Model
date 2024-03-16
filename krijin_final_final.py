@@ -10,6 +10,7 @@ data_001 = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Pape
 data_111 = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_111.xlsx', index_col='Material')
 Data_GaInAs = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAs.xlsx', index_col='Material')
 Data_GaInAsP = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAsP.xlsx', index_col='Material')
+ground_states = pd.read_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Ground states.xlsx', index_col='Structure')
 
 def calculate_bandgap(substrate, epilayer, orientation):
     """
@@ -215,7 +216,7 @@ def calculate_T_values_ternary(structure, GaAs, InAs, GaInAs, material_parameter
     x_values = ingaas_table.loc['Ga mole fraction (x)', structure]
     if material_parameter == 'Eg(Γ)' or material_parameter == 'Δ0':
         T_ABC_values_ternary = x_values * GaAs + (1 - x_values) * InAs + x_values * (x_values - 1) * GaInAs
-    elif material_parameter == 'Ev' or material_parameter == 'Ec':
+    elif material_parameter == 'Ev' or material_parameter == 'Ec'or material_parameter == 'ε_parallel' or material_parameter == 'ε_perpendicular':
         T_ABC_values_ternary = x_values * GaAs + (1 - x_values) * InAs
 
     return T_ABC_values_ternary
@@ -244,7 +245,7 @@ def process_data_ternary(material_parameter):
     for structure in structures:
         if material_parameter == 'Eg(Γ)' or material_parameter == 'Δ0':
             T_ABC_values = calculate_T_values_ternary(structure, GaAs, InAs, GaInAs, material_parameter)
-        elif material_parameter == 'Ev' or material_parameter == 'Ec':
+        elif material_parameter == 'Ev' or material_parameter == 'Ec' or material_parameter =='ε_parallel' or material_parameter == 'ε_perpendicular':
             GaInAs = None
             T_ABC_values = calculate_T_values_ternary(structure, GaAs, InAs, GaInAs, material_parameter)
 
@@ -259,6 +260,10 @@ def process_data_ternary(material_parameter):
             Data_GaInAs.loc['GaInAs', f'{structure} - Ev'] = T_ABC_values
         elif material_parameter == 'Ec':
             Data_GaInAs.loc['GaInAs', f'{structure} - Ec'] = T_ABC_values
+        elif material_parameter == 'ε_parallel':
+            Data_GaInAs.loc['GaInAs', f'{structure} - ε_parallel'] = T_ABC_values
+        elif material_parameter == 'ε_perpendicular':
+            Data_GaInAs.loc['GaInAs', f'{structure} - ε_perpendicular'] = T_ABC_values
         Data_GaInAs.to_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAs.xlsx')
         T_ABC_values_list.append(T_ABC_values)
 
@@ -286,9 +291,9 @@ def calculate_T_values_quaternary(GaAs, InAs, GaInAs, GaP, GaInP, GaPAs, InP, In
         T_ABC_values_quaternary = 0.14 * GaAs + (1 - 0.14) * InAs + 0.14 * (0.14 - 1) * GaInAs
         T_ABD_values_quaternary = 0.14 * GaP + (1 - 0.14) * InP + 0.14 * (0.14 - 1) * GaInP
         T_ACD_values_quaternary = 0.3 * GaAs + (1 - 0.3) * GaP + 0.3 * (0.3 - 1) * GaPAs
-        T_BCD_values_quaternary = 0.3 * InAs + (1 - 0.5) * InP + 0.3 * (0.3 - 1) * InPAs
-    elif material_parameter == 'Ev' or material_parameter == 'Ec':
-        T_ABC_values_quaternary = 0.14 * GaAs + (1 - 0.13) * InAs 
+        T_BCD_values_quaternary = 0.3 * InAs + (1 - 0.3) * InP + 0.3 * (0.3 - 1) * InPAs
+    elif material_parameter == 'Ev' or material_parameter == 'Ec' or material_parameter == 'ε_parallel' or material_parameter == 'ε_perpendicular':
+        T_ABC_values_quaternary = 0.14 * GaAs + (1 - 0.14) * InAs 
         T_ABD_values_quaternary = 0.14 * GaP + (1 - 0.14) * InP 
         T_ACD_values_quaternary = 0.3 * GaAs + (1 - 0.3) * GaP 
         T_BCD_values_quaternary = 0.3 * InAs + (1 - 0.3) * InP 
@@ -337,7 +342,7 @@ def process_data_quaternary(material_parameter):
         GaPAs  = krijin_table2.loc["GaPxAs1-x", f'C({material_parameter})'] 
         InPAs = krijin_table2.loc["InPxAs1-x", f'C({material_parameter})'] 
         T_ABC_values, T_ABD_values, T_ACD_values, T_BCD_values = calculate_T_values_quaternary(GaAs, InAs, GaInAs, GaP, GaInP, GaPAs, InP, InPAs, material_parameter)
-    elif material_parameter == 'Ev' or material_parameter == 'Ec':
+    elif material_parameter == 'Ev' or material_parameter == 'Ec' or material_parameter == 'ε_parallel' or material_parameter == 'ε_perpendicular' :
         GaInAs = GaInP = GaPAs = InPAs = None
         T_ABC_values, T_ABD_values, T_ACD_values, T_BCD_values = calculate_T_values_quaternary(GaAs, InAs, GaInAs, GaP, GaInP, GaPAs, InP, InPAs, material_parameter)
     # Calculate Q values for quaternary alloys
@@ -354,6 +359,10 @@ def process_data_quaternary(material_parameter):
         Data_GaInAsP.loc['GaInAsP', 'Ev'] = Q_xy_values
     elif material_parameter == 'Ec':
         Data_GaInAsP.loc['GaInAsP', 'Ec'] = Q_xy_values
+    elif material_parameter == 'Ec':
+        Data_GaInAsP.loc['GaInAsP', 'ε_parallel'] = Q_xy_values
+    elif material_parameter == 'Ec':
+        Data_GaInAsP.loc['GaInAsP', 'ε_perpendicular'] = Q_xy_values
     Data_GaInAsP.to_excel(r'C:\Users\beree\OneDrive\Documents\ENGR301\Krijin Paper\Data_GaInAsP.xlsx')
 
     return Q_xy_values
@@ -414,6 +423,22 @@ def plot_GaInAsP_InP(ax):
                 fontsize=8, color='black')
         ax.text(0.6, GaInAsP_Ev, 'Ev', ha='left', va='center',
                 fontsize=8, color='black')
+        ax.text(1.0, GaInAs_Ec, 'Ec', ha='left', va='center',
+                fontsize=8, color='black')
+        ax.text(1.0, GaInAs_Ev, 'Ev', ha='left', va='center',
+                fontsize=8, color='black')
+        
+        # Annotate the energy gap between the valence band of the epilayer and the valence band of the substrate
+        ax.text(0.91, (InP_Ev + GaInAs_Ev) / 2, 
+                f'Energy Gap: {(GaInAs_Ev - InP_Ev):.2f} eV', 
+                ha='center', va='center', fontsize=8, color='black')
+        ax.annotate(f'',
+                    xy=(0.8, InP_Ev) , xycoords='data',
+                    xytext=(0.8, GaInAs_Ev), textcoords='data',
+                    arrowprops=dict(arrowstyle="<->", connectionstyle="arc3"),
+                    fontsize=8, ha='center', va='top')
+
+        # Annotate the valence band and the conduction band
         ax.text(1.0, GaInAs_Ec, 'Ec', ha='left', va='center',
                 fontsize=8, color='black')
         ax.text(1.0, GaInAs_Ev, 'Ev', ha='left', va='center',
@@ -491,51 +516,69 @@ def plot_quaternary(ax):
     GaInAs_Ec_list = process_data_ternary('Ec')
     GaInAs_Ev_list = process_data_ternary('Ev')
     GaInAs_Eg_list = process_data_ternary('Eg(Γ)')
+    G_s_v = ground_states.loc['Ev', 'A']
+    G_s_c = ground_states.loc['Ec', 'A']
+   
 
     # Iterate over structures
     for i, structure in enumerate(structures):
         GaInAs_Ec = GaInAs_Ec_list[i]
         GaInAs_Ev = GaInAs_Ev_list[i]
         GaInAs_Eg = GaInAs_Eg_list[i]
+        L = ingaas_table.loc['Lw(Å)', structure]
+        
 
         # Create a new subplot for each structure
         fig, ax = plt.subplots()
 
         # Iterate over structures and plot the values
-        ax.hlines(y=GaInAsP_Ev, xmin=0, xmax=0.4, color='blue', label='Valence band')
-        ax.hlines(y=GaInAsP_Ec, xmin=0, xmax=0.4, color='red', label='Conduction band')
-        ax.vlines(x=0.4, ymin=GaInAsP_Ev, ymax=GaInAs_Ev, color='blue')
-        ax.vlines(x=0.4, ymin=GaInAsP_Ec, ymax=GaInAs_Ec, color='red')
-        ax.hlines(y=GaInAs_Ev, xmin=0.4, xmax=0.8, color='blue')
-        ax.hlines(y=GaInAs_Ec, xmin=0.4, xmax=0.8, color='red')
-        ax.vlines(x=0.8, ymin=GaInAsP_Ev, ymax=GaInAs_Ev, color='blue')
-        ax.vlines(x=0.8, ymin=GaInAsP_Ec, ymax=GaInAs_Ec, color='red')
-        ax.hlines(y=GaInAsP_Ev, xmin=0.8, xmax=1.2, color='blue')
-        ax.hlines(y=GaInAsP_Ec, xmin=0.8, xmax=1.2, color='red')
+        
+        ax.hlines(y=GaInAsP_Ev, xmin=-2*L, xmax=-L/2, color='blue', label='Valence band')
+        ax.hlines(y=GaInAsP_Ec, xmin=-2*L, xmax=-L/2, color='red', label='Conduction band')
+        ax.vlines(x=-L/2, ymin=GaInAsP_Ev, ymax=GaInAs_Ev, color='blue')
+        ax.vlines(x=-L/2, ymin=GaInAsP_Ec, ymax=GaInAs_Ec, color='red')
+        ax.hlines(y=GaInAs_Ev, xmin=-L/2, xmax=L/2, color='blue')
+        ax.hlines(y=GaInAs_Ec, xmin=-L/2, xmax=L/2, color='red')
+        if i==0:
+            ax.hlines(y= GaInAs_Ev - G_s_v, xmin=-L/2, xmax=L/2, color='green', label='Ground state energy')
+            ax.hlines(y= GaInAs_Ec + G_s_c, xmin=-L/2, xmax=L/2, color='green')
+        ax.vlines(x=L/2, ymin=GaInAsP_Ev, ymax=GaInAs_Ev, color='blue')
+        ax.vlines(x=L/2, ymin=GaInAsP_Ec, ymax=GaInAs_Ec, color='red')
+        ax.hlines(y=GaInAsP_Ev, xmin=L/2, xmax=2*L, color='blue')
+        ax.hlines(y=GaInAsP_Ec, xmin=L/2, xmax=2*L, color='red')
 
         ax.set_ylabel('Energy (eV)')
         ax.set_xlabel(f'Structure {structure}')
-        ax.set_title(f'Energy Levels for GaInAsP/GaInAs')
-        ax.set_xticks([])  # Remove x-axis ticks
+        ax.set_title('Energy Levels for GaInAsP/GaInAs for ' f'Structure {structure}')
+        ax.set_xlabel('L(Å)')
         ax.legend()
 
-        ax.text(0.2, (GaInAsP_Ev + GaInAsP_Ec) / 2, 
+        ax.text(-1.25*L, (GaInAsP_Ev + GaInAsP_Ec) / 2, 
                 'GaInAsP', 
                 ha='center', va='center', fontsize=8, color='black')
-        ax.text(0.5, (GaInAs_Ev + GaInAs_Ec) / 2, 
+        ax.text(-L/4, (GaInAs_Ev + GaInAs_Ec) / 2, 
                 'GaInAs', 
                 ha='center', va='center', fontsize=8, color='black')
-        ax.text(1.0, (GaInAsP_Ev + GaInAsP_Ec) / 2, 
+        ax.text(1.25*L, (GaInAsP_Ev + GaInAsP_Ec) / 2, 
                 'GaInAsP', 
                 ha='center', va='center', fontsize=8, color='black')
-        ax.text(0.7, (GaInAs_Ev + GaInAs_Ec) / 2, 
+        ax.text(L/4, (GaInAs_Ev + GaInAs_Ec) / 2, 
                 f'Energy Gap: {GaInAs_Eg:.2f} eV', 
                 ha='center', va='center', fontsize=8, color='black')
         ax.annotate(f'',
-                    xy=(0.6, GaInAs_Ev), xycoords='data',
-                    xytext=(0.6, GaInAs_Ec), textcoords='data',
+                    xy=(0, GaInAs_Ev), xycoords='data',
+                    xytext=(0, GaInAs_Ec), textcoords='data',
                     arrowprops=dict(arrowstyle="<->", connectionstyle="arc3"),
                     fontsize=8, ha='center', va='top')
+        if i==0:
+            ax.text(0, -6.6, 
+                f'Ground State Energy: {G_s_v:.2f} eV', 
+                ha='center', va='center', fontsize=8, color='black')
+
+            ax.text(0, -5.8, 
+                f'Ground State Energy: {G_s_c:.2f} eV', 
+                ha='center', va='center', fontsize=8, color='black')
+
         
         plt.show()  # Display each subplot
 
@@ -569,6 +612,8 @@ def main():
         process_data_ternary('Δ0')
         process_data_ternary('Ev')
         process_data_ternary('Ec')
+        process_data_ternary('ε_parallel')
+        process_data_ternary('ε_perpendicular')
 
         fig, ax = plt.subplots()
         plot_GaInAs_InP(ax)
@@ -578,11 +623,13 @@ def main():
         #Run calculations to import data into spreadsheet
         process_data_quaternary('Eg(Γ)')
         process_data_quaternary('Δ0')
-        process_data_quaternary('Ev')
-        process_data_quaternary('Ec')
+        #process_data_quaternary('Ev')
+        #process_data_quaternary('Ec')
+        process_data_quaternary('ε_parallel')
+        process_data_quaternary('ε_perpendicular')
 
         fig, ax = plt.subplots()
-        plot_GaInAsP_InP(ax)
+        #plot_GaInAsP_InP(ax)
         plt.show()
 
         fig, ax = plt.subplots()
